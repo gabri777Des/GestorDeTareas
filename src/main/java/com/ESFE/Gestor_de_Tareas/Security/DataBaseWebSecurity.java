@@ -26,12 +26,15 @@ public class DataBaseWebSecurity {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http.authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/dist/*", "/plugins/*").permitAll()
-                .requestMatchers("/", "/privacy", "/terms").permitAll()
+                // aperturar el acceso a los recursos estáticos
+                .requestMatchers( "/dist/**", "/plugins/**").permitAll()
+                // las vistas públicas no requieren autenticación
+                .requestMatchers("/","/Usuarios/create", "/Usuarios/save" ,"/privacy", "/terms").permitAll()
+                // todas las demás vistas requieren autenticación
                 .anyRequest().authenticated());
-        http.formLogin(form -> form.permitAll());
+        http.formLogin(form -> form.loginPage("/login").permitAll());
 
         return http.build();
     }
